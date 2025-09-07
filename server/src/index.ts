@@ -1,28 +1,15 @@
-import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
+import { config } from "dotenv";
+import { resolve } from "path";
 
-dotenv.config();
+config({ path: resolve(__dirname, "../.env") });
 
-const app = express();
-const port = Number(process.env.PORT || 4000);
+import "./db/pool";  
+import app from "./app"; 
 
-app.use(cors());
-app.use(express.json());
+const port = Number(process.env.PORT) || 4000;
 
-// Health-check (test ruta)
-app.get("/api/v1/health", (_req, res) => {
-  res.json({ ok: true, service: "api", time: new Date().toISOString() });
-});
+console.log("JWT_SECRET set?", !!process.env.JWT_SECRET);
 
 app.listen(port, () => {
-  console.log(`API listening on http://localhost:${port}`);
+  console.log(`Listening: http://localhost:${port}`);
 });
-
-app.get("/api/v1/faults", (_req, res) => {
-  res.json([
-    { id: 1, title: "Pokvaren lift", status: "open" },
-    { id: 2, title: "Prokišnjava krov", status: "in_progress" }
-  ]);
-});
-
